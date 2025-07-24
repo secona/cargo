@@ -1920,3 +1920,44 @@ foo v1.0.0 ([ROOT]/foo)
 "#]])
         .run();
 }
+
+#[cargo_test]
+fn errors_when_wrong_package_found() {
+    let p = project()
+        .file("crates/bar/src/lib.rs", "")
+        .file(
+            "crates/bar/Cargo.toml",
+            r#"
+                [package]
+                name = "bar"
+                version = "0.1.0"
+                edition = "2024"
+                authors = []
+            "#
+        )
+        .file("src/lib.rs", "")
+        .file(
+            "Cargo.toml",
+            r#"
+                [package]
+                name = "foo"
+                version = "0.1.0"
+                edition = "2024"
+                authors = []
+
+                [dependencies]
+                definitely_not_bar = { path = "crates/bar" }
+            "#
+        )
+        .build();
+
+    p.cargo("build")
+        .with_status(101)
+        .with_stderr_data(str![[r#"
+[ERROR] no matching package named `definitely_not_bar` found
+location searched: [ROOT]/foo/crates/bar
+required by package `foo v0.1.0 ([ROOT]/foo)`
+
+"#]])
+        .run();
+}

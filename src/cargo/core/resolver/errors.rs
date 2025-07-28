@@ -3,8 +3,8 @@ use std::fmt::Write as _;
 use std::task::Poll;
 
 use crate::core::{Dependency, PackageId, Registry, Summary};
-use crate::sources::IndexSummary;
 use crate::sources::source::QueryKind;
+use crate::sources::{IndexSummary, RecursivePathSource};
 use crate::util::edit_distance::{closest, edit_distance};
 use crate::util::errors::CargoResult;
 use crate::util::{GlobalContext, OptVersionReq, VersionExt};
@@ -390,6 +390,18 @@ pub(super) fn activation_error(
             "no matching package named `{}` found",
             dep.package_name()
         );
+
+        if let Some(path) = dep.source_id().local_path()
+            && let Some(gctx) = gctx
+        {
+            let mut path_src = RecursivePathSource::new(&path, dep.source_id(), gctx);
+            if let Ok(packages) = path_src.read_packages() {
+                let _ = writeln!(&mut msg, "other packages found: ");
+                for pkg in packages {
+                    let _ = writeln!(&mut msg, "- {} at {}", pkg.name(), pkg.root().display());
+                }
+            }
+        }
     }
 
     let mut location_searched_msg = registry.describe_source(dep.source_id());

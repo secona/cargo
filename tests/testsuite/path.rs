@@ -1933,7 +1933,7 @@ fn errors_when_wrong_package_found() {
                 version = "0.1.0"
                 edition = "2024"
                 authors = []
-            "#
+            "#,
         )
         .file("src/lib.rs", "")
         .file(
@@ -1947,7 +1947,7 @@ fn errors_when_wrong_package_found() {
 
                 [dependencies]
                 definitely_not_bar = { path = "crates/bar" }
-            "#
+            "#,
         )
         .build();
 
@@ -1955,8 +1955,76 @@ fn errors_when_wrong_package_found() {
         .with_status(101)
         .with_stderr_data(str![[r#"
 [ERROR] no matching package named `definitely_not_bar` found
+other packages found: 
+- bar at [ROOT]/foo/crates/bar
 location searched: [ROOT]/foo/crates/bar
 required by package `foo v0.1.0 ([ROOT]/foo)`
+
+"#]])
+        .run();
+}
+
+#[cargo_test]
+fn errors_path_refers_to_workspace() {
+    let p = project()
+        .file("crates/bar/src/lib.rs", "")
+        .file(
+            "crates/bar/Cargo.toml",
+            r#"
+                [package]
+                name = "bar"
+                version = "0.1.0"
+                edition = "2024"
+                authors = []
+            "#,
+        )
+        .file("crates/baz/src/lib.rs", "")
+        .file(
+            "crates/baz/Cargo.toml",
+            r#"
+                [package]
+                name = "baz"
+                version = "0.1.0"
+                edition = "2024"
+                authors = []
+            "#,
+        )
+        .file(
+            "crates/Cargo.toml",
+            r#"
+                [workspace]
+                members = ["./bar", "./baz"]
+            "#,
+        )
+        .file("src/lib.rs", "")
+        .file(
+            "Cargo.toml",
+            r#"
+                [package]
+                name = "foo"
+                version = "0.1.0"
+                edition = "2024"
+                authors = []
+
+                [dependencies]
+                bar = { path = "crates" }
+            "#,
+        )
+        .build();
+
+    p.cargo("build")
+        .with_status(101)
+        .with_stderr_data(str![[r#"
+[ERROR] failed to get `bar` as a dependency of package `foo v0.1.0 ([ROOT]/foo)`
+
+Caused by:
+  failed to load source for dependency `bar`
+
+Caused by:
+  Unable to update [ROOT]/foo/crates
+
+Caused by:
+  found a virtual manifest at `[ROOT]/foo/crates/Cargo.toml` instead of a package manifest
 
 "#]])
         .run();

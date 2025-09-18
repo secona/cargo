@@ -12,6 +12,7 @@ pub mod core;
 pub mod index;
 pub mod manifest;
 pub mod messages;
+pub mod resolve;
 #[cfg(feature = "unstable-schema")]
 pub mod schema;
 

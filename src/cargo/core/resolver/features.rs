@@ -423,13 +423,6 @@ pub struct FeatureResolver<'a, 'gctx> {
     processed_deps: HashSet<PackageFeaturesKey>,
     /// If this is `true`, then a non-default `feature_key` needs to be tracked while
     /// traversing the graph.
-    ///
-    /// This is only here to avoid calling [`has_any_proc_macro`] when all feature
-    /// options are disabled (because [`has_any_proc_macro`] can trigger downloads).
-    /// This has to be separate from [`FeatureOpts::decouple_host_deps`] because
-    /// `for_host` tracking is also needed for `itarget` to work properly.
-    ///
-    /// [`has_any_proc_macro`]: FeatureResolver::has_any_proc_macro
     track_for_host: bool,
     /// `dep_name?/feat_name` features that will be activated if `dep_name` is
     /// ever activated.
@@ -490,7 +483,7 @@ impl<'a, 'gctx> FeatureResolver<'a, 'gctx> {
         let member_features = self.ws.members_with_features(specs, cli_features)?;
         for (member, cli_features) in &member_features {
             let fvs = self.fvs_from_requested(member.package_id(), cli_features);
-            let fk = if self.track_for_host && self.has_any_proc_macro(member.package_id()) {
+            let fk = if self.track_for_host && member.proc_macro() {
                 // Also activate for normal dependencies. This is needed if the
                 // proc-macro includes other targets (like binaries or tests),
                 // or running in `cargo test`. Note that in a workspace, if
@@ -946,14 +939,6 @@ impl<'a, 'gctx> FeatureResolver<'a, 'gctx> {
         if found {
             panic!("feature mismatch");
         }
-    }
-
-    /// Whether the given package has any proc macro target, including proc-macro examples.
-    fn has_any_proc_macro(&self, package_id: PackageId) -> bool {
-        self.package_set
-            .get_one(package_id)
-            .expect("packages downloaded")
-            .proc_macro()
     }
 
     /// Whether the given package is a proc macro lib target.

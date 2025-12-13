@@ -63,8 +63,8 @@ impl EitherManifest {
 pub struct Manifest {
     // alternate forms of manifests:
     contents: Rc<String>,
-    document: Rc<toml::Spanned<toml::de::DeTable<'static>>>,
-    original_toml: Rc<TomlManifest>,
+    document: Option<Rc<toml::Spanned<toml::de::DeTable<'static>>>>,
+    original_toml: Option<Rc<TomlManifest>>,
     normalized_toml: Rc<TomlManifest>,
     summary: Summary,
 
@@ -110,8 +110,8 @@ pub struct Warnings(Vec<DelayedWarning>);
 pub struct VirtualManifest {
     // alternate forms of manifests:
     contents: Rc<String>,
-    document: Rc<toml::Spanned<toml::de::DeTable<'static>>>,
-    original_toml: Rc<TomlManifest>,
+    document: Option<Rc<toml::Spanned<toml::de::DeTable<'static>>>>,
+    original_toml: Option<Rc<TomlManifest>>,
     normalized_toml: Rc<TomlManifest>,
 
     // this form of manifest:
@@ -527,8 +527,8 @@ impl Manifest {
     ) -> Manifest {
         Manifest {
             contents,
-            document,
-            original_toml,
+            document: Some(document),
+            original_toml: Some(original_toml),
             normalized_toml,
             summary,
 
@@ -569,11 +569,11 @@ impl Manifest {
     }
     /// Collection of spans for the original TOML
     pub fn document(&self) -> &toml::Spanned<toml::de::DeTable<'static>> {
-        &self.document
+        self.document.as_ref().unwrap()
     }
     /// The [`TomlManifest`] as parsed from [`Manifest::document`]
     pub fn original_toml(&self) -> &TomlManifest {
-        &self.original_toml
+        self.original_toml.as_ref().unwrap()
     }
     /// The [`TomlManifest`] with all fields expanded
     ///
@@ -756,8 +756,8 @@ impl VirtualManifest {
     ) -> VirtualManifest {
         VirtualManifest {
             contents,
-            document,
-            original_toml,
+            document: Some(document),
+            original_toml: Some(original_toml),
             normalized_toml,
             replace,
             patch,
@@ -774,11 +774,11 @@ impl VirtualManifest {
     }
     /// Collection of spans for the original TOML
     pub fn document(&self) -> &toml::Spanned<toml::de::DeTable<'static>> {
-        &self.document
+        self.document.as_ref().unwrap()
     }
     /// The [`TomlManifest`] as parsed from [`VirtualManifest::document`]
     pub fn original_toml(&self) -> &TomlManifest {
-        &self.original_toml
+        self.original_toml.as_ref().unwrap()
     }
     /// The [`TomlManifest`] with all fields expanded
     pub fn normalized_toml(&self) -> &TomlManifest {

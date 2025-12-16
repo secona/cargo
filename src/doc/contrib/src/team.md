@@ -102,7 +102,7 @@ The Cargo team has various permissions on GitHub:
 - [`rust-lang/cargo-team`](https://github.com/rust-lang/cargo-team) --- The repository for the Cargo team, primarily hosting meeting notes.
 - [`rust-lang/rust`](https://github.com/rust-lang/rust) --- The primary repository for Rust releases. The cargo team has "write" permission, and also permission to approve merges via [bors](https://bors.rust-lang.org/) (primarily for [submodule updates]).
 - [`rust-lang/annotate-snippets-rs`](https://github.com/rust-lang/annotate-snippets-rs) --- The diagnostic formatting library shared between `rustc` and `cargo`.
-- [`rust-lang/git2-rs`](https://github.com/rust-lang/annotate-snippets-rs) --- The bindings to the libgit2 library used by `cargo`.
+- [`rust-lang/git2-rs`](https://github.com/rust-lang/git2-rs) --- The bindings to the libgit2 library used by `cargo`.
 - [`rust-lang/jobserver-rs`](https://github.com/rust-lang/jobserver-rs) --- The jobserver library.
 - [`rust-lang/wg-cargo-std-aware`](https://github.com/rust-lang/wg-cargo-std-aware) --- Repository used to coordinate the efforts to support building `std` with cargo.
 

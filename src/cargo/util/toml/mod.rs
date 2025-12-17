@@ -1866,7 +1866,7 @@ note: only a feature named `default` will be enabled by default"
                 .to_owned(),
         );
     }
-    warn_on_unused(&manifest.original_toml()._unused_keys, warnings);
+    warn_on_unused(&manifest.original_toml().unwrap()._unused_keys, warnings);
 
     manifest.feature_gate()?;
 
@@ -2008,7 +2008,7 @@ fn to_virtual_manifest(
         resolve_behavior,
     );
 
-    warn_on_unused(&manifest.original_toml()._unused_keys, warnings);
+    warn_on_unused(&manifest.original_toml().unwrap()._unused_keys, warnings);
 
     Ok(manifest)
 }
@@ -2923,7 +2923,7 @@ pub fn prepare_for_publish(
     packaged_files: Option<&[PathBuf]>,
 ) -> CargoResult<Package> {
     let contents = me.manifest().contents();
-    let document = me.manifest().document();
+    let document = me.manifest().document().unwrap();
     let original_toml = prepare_toml_for_publish(
         me.manifest().normalized_toml(),
         ws,

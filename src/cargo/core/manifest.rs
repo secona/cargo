@@ -568,12 +568,12 @@ impl Manifest {
         Ok(format!("{}\n{}", MANIFEST_PREAMBLE, toml))
     }
     /// Collection of spans for the original TOML
-    pub fn document(&self) -> &toml::Spanned<toml::de::DeTable<'static>> {
-        self.document.as_ref().unwrap()
+    pub fn document(&self) -> Option<&toml::Spanned<toml::de::DeTable<'static>>> {
+        self.document.as_ref().map(|d| d.as_ref())
     }
     /// The [`TomlManifest`] as parsed from [`Manifest::document`]
-    pub fn original_toml(&self) -> &TomlManifest {
-        self.original_toml.as_ref().unwrap()
+    pub fn original_toml(&self) -> Option<&TomlManifest> {
+        self.original_toml.as_ref().map(|ot| ot.as_ref())
     }
     /// The [`TomlManifest`] with all fields expanded
     ///
@@ -773,12 +773,12 @@ impl VirtualManifest {
         self.contents.as_str()
     }
     /// Collection of spans for the original TOML
-    pub fn document(&self) -> &toml::Spanned<toml::de::DeTable<'static>> {
-        self.document.as_ref().unwrap()
+    pub fn document(&self) -> Option<&toml::Spanned<toml::de::DeTable<'static>>> {
+        self.document.as_ref().map(|d| d.as_ref())
     }
     /// The [`TomlManifest`] as parsed from [`VirtualManifest::document`]
-    pub fn original_toml(&self) -> &TomlManifest {
-        self.original_toml.as_ref().unwrap()
+    pub fn original_toml(&self) -> Option<&TomlManifest> {
+        self.original_toml.as_ref().map(|ot| ot.as_ref())
     }
     /// The [`TomlManifest`] with all fields expanded
     pub fn normalized_toml(&self) -> &TomlManifest {

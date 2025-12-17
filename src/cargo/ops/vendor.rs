@@ -498,7 +498,7 @@ fn prepare_for_vendor(
     gctx: &GlobalContext,
 ) -> CargoResult<Package> {
     let contents = me.manifest().contents();
-    let document = me.manifest().document();
+    let document = me.manifest().document().unwrap();
     let original_toml = prepare_toml_for_vendor(
         me.manifest().normalized_toml().clone(),
         packaged_files,

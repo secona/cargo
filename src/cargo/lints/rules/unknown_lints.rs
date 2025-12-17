@@ -53,7 +53,7 @@ pub fn output_unknown_lints(
         return Ok(());
     }
 
-    let document = manifest.document();
+    let document = manifest.document().unwrap();
     let contents = manifest.contents();
 
     let level = lint_level.to_diagnostic_level();

@@ -120,9 +120,10 @@ pub fn blanket_hint_mostly_unused(
         let title = "`hint-mostly-unused` is being blanket applied to all dependencies";
         let help_txt =
             "scope `hint-mostly-unused` to specific packages with a lot of unused object code";
+        let document = maybe_pkg.document().unwrap();
         if let (Some(span), Some(table_span)) = (
-            get_key_value_span(maybe_pkg.document(), &path),
-            get_key_value_span(maybe_pkg.document(), &path[..path.len() - 1]),
+            get_key_value_span(document, &path),
+            get_key_value_span(document, &path[..path.len() - 1]),
         ) {
             let mut report = Vec::new();
             let mut primary_group = level.clone().primary_title(title).element(

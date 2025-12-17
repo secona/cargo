@@ -121,7 +121,7 @@ pub fn lint_package(
 ) -> CargoResult<()> {
     let manifest = pkg.manifest();
 
-    let document = manifest.document();
+    let document = manifest.document().unwrap();
     let contents = manifest.contents();
     let target_key_for_platform = target_key_for_platform(&manifest);
 
@@ -169,7 +169,7 @@ pub fn lint_workspace(
     error_count: &mut usize,
     gctx: &GlobalContext,
 ) -> CargoResult<()> {
-    let document = maybe_pkg.document();
+    let document = maybe_pkg.document().unwrap();
     let contents = maybe_pkg.contents();
     let toml = match maybe_pkg {
         MaybePackage::Package(p) => p.manifest().normalized_toml(),

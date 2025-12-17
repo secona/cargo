@@ -2366,7 +2366,7 @@ impl ManifestErrorContext {
         let bcx = build_runner.bcx;
         ManifestErrorContext {
             path: unit.pkg.manifest_path().to_owned(),
-            spans: unit.pkg.manifest().document().clone(),
+            spans: unit.pkg.manifest().document().unwrap().clone(),
             contents: unit.pkg.manifest().contents().to_owned(),
             requested_kinds: bcx.target_data.requested_kinds().to_owned(),
             host_name: bcx.rustc().host,

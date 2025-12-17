@@ -497,8 +497,8 @@ compact_debug! {
 impl Manifest {
     pub fn new(
         contents: Rc<String>,
-        document: Rc<toml::Spanned<toml::de::DeTable<'static>>>,
-        original_toml: Rc<TomlManifest>,
+        document: Option<Rc<toml::Spanned<toml::de::DeTable<'static>>>>,
+        original_toml: Option<Rc<TomlManifest>>,
         normalized_toml: Rc<TomlManifest>,
         summary: Summary,
 
@@ -527,8 +527,8 @@ impl Manifest {
     ) -> Manifest {
         Manifest {
             contents,
-            document: Some(document),
-            original_toml: Some(original_toml),
+            document,
+            original_toml,
             normalized_toml,
             summary,
 
@@ -745,8 +745,8 @@ impl Manifest {
 impl VirtualManifest {
     pub fn new(
         contents: Rc<String>,
-        document: Rc<toml::Spanned<toml::de::DeTable<'static>>>,
-        original_toml: Rc<TomlManifest>,
+        document: Option<Rc<toml::Spanned<toml::de::DeTable<'static>>>>,
+        original_toml: Option<Rc<TomlManifest>>,
         normalized_toml: Rc<TomlManifest>,
         replace: Vec<(PackageIdSpec, Dependency)>,
         patch: HashMap<Url, Vec<Dependency>>,
@@ -756,8 +756,8 @@ impl VirtualManifest {
     ) -> VirtualManifest {
         VirtualManifest {
             contents,
-            document: Some(document),
-            original_toml: Some(original_toml),
+            document,
+            original_toml,
             normalized_toml,
             replace,
             patch,

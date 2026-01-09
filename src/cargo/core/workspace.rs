@@ -242,6 +242,39 @@ impl<'gctx> Workspace<'gctx> {
         Ok(ws)
     }
 
+    pub fn new_in_memory(
+        manifest_path: &Path,
+        root_manifest: Option<PathBuf>,
+        packages: HashMap<PathBuf, MaybePackage>,
+        members: Vec<PathBuf>,
+        default_members: Vec<PathBuf>,
+        member_ids: HashSet<PackageId>,
+        gctx: &'gctx GlobalContext,
+    ) -> CargoResult<Workspace<'gctx>> {
+        let mut ws = Workspace::new_default(manifest_path.to_path_buf(), gctx);
+
+        ws.root_manifest = root_manifest;
+        ws.target_dir = gctx.target_dir()?;
+        ws.build_dir = gctx.build_dir(ws.root_manifest())?;
+
+        // We want to load packages manually to avoid loading them through `Packages` which
+        // triggers a disk read.
+        ws.packages.packages = packages;
+
+        ws.custom_metadata = ws
+            .load_workspace_config()?
+            .and_then(|cfg| cfg.custom_metadata);
+
+        ws.members = members;
+        ws.default_members = default_members;
+        ws.member_ids = member_ids;
+
+        ws.set_resolve_behavior()?;
+        ws.validate()?;
+
+        Ok(ws)
+    }
+
     fn new_default(current_manifest: PathBuf, gctx: &'gctx GlobalContext) -> Workspace<'gctx> {
         Workspace {
             gctx,
